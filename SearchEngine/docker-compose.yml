@@ -1,0 +1,26 @@
+version:  "3.9"
+
+services:
+  api: 
+    build: 
+      context:  .
+      dockerfile:  "SearchAPI/Dockerfile"
+    ports:
+      - 9000:80
+    volumes:
+      - C:/data:/data
+  web-1:
+    build: 
+      context:  .
+      dockerfile:  "WebSearch/Dockerfile"
+    ports:
+      - 9001:80
+
+  web-2:
+    build: 
+      context:  .
+      dockerfile:  "WebSearch/Dockerfile"
+    ports:
+      - 9002:80
+volumes:
+  data:
