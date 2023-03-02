@@ -1,3 +1,4 @@
+Console.WriteLine("Hostname: " + Environment.MachineName);
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
