@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 
 @Component({
@@ -10,6 +10,7 @@ export class HomeComponent {
   public baseUrl: string = "http://localhost:9000";
   public searchResult?: SearchResult = undefined;
   public searchTerms: string = "";
+  public loading: boolean = false;
 
 
   constructor(http: HttpClient) {
@@ -17,8 +18,11 @@ export class HomeComponent {
   }
 
   public search(searchTerms: string) {
+    this.loading = true;
+    this.searchResult = undefined;
     this.httpClient.get<SearchResult>(this.baseUrl + '/Search?terms=' + searchTerms + "&numberOfResults=" + 10).subscribe(result => {
       this.searchResult = result;
+      this.loading = false;
       console.log(result);
     }, error => console.error(error));
   }
