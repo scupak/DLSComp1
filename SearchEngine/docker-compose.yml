@@ -9,6 +9,10 @@ services:
       - 9000:80
     volumes:
       - C:/data:/data
+  loadbalancer: 
+    build: 
+      context:  .
+      dockerfile:  "LoadBalancer/Dockerfile"
   web-1:
     build: 
       context:  .
