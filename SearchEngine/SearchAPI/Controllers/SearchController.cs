@@ -11,7 +11,7 @@ public class SearchController : ControllerBase
     [HttpGet]
     public async Task<SearchResult> Search(string terms, int numberOfResults)
     {
-        
+
         var wordIds = new List<int>();
         var searchTerms = terms.Split(" ", StringSplitOptions.RemoveEmptyEntries);
         var mSearchLogic = new SearchLogic(new Database());
@@ -47,11 +47,18 @@ public class SearchController : ControllerBase
         int idx = 0;
         foreach (var doc in await mSearchLogic.GetDocumentDetails(top))
         {
-            result.Documents.Add(new Document { Id = idx +1, Path = doc, NumberOfAppearances = docIds[idx].Value});
-            Console.WriteLine("" + (idx+1) + ": " + doc + " -- contains " + docIds[idx].Value + " search terms");
+            result.Documents.Add(new Document { Id = idx + 1, Path = doc, NumberOfAppearances = docIds[idx].Value });
+            Console.WriteLine("" + (idx + 1) + ": " + doc + " -- contains " + docIds[idx].Value + " search terms");
             idx++;
         }
         Console.WriteLine("Documents: " + docIds.Count + ". Time: " + used.TotalMilliseconds);
         return result;
+    }
+
+    [HttpGet]
+    [Route("ping")]
+    public IActionResult Ping()
+    {
+        return Ok();
     }
 }

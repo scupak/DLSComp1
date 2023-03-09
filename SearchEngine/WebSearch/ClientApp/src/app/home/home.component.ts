@@ -20,7 +20,7 @@ export class HomeComponent {
   public search(searchTerms: string) {
     this.loading = true;
     this.searchResult = undefined;
-    this.httpClient.get<SearchResult>(this.baseUrl + '/Search?terms=' + searchTerms + "&numberOfResults=" + 10).subscribe(result => {
+    this.httpClient.get<SearchResult>(this.baseUrl + '/LoadBalancer/Search?terms=' + searchTerms + "&numberOfResults=" + 10).subscribe(result => {
       this.searchResult = result;
       this.loading = false;
       console.log(result);
