@@ -15,7 +15,7 @@ public class LoadBalancerController : ControllerBase
     public LoadBalancerController(ILoadBalancer loadBalancer)
     {
         this.loadBalancer = loadBalancer;
-        client = new RestClient("http://");
+        client = new RestClient();
     }
 
     [HttpGet]
@@ -29,12 +29,13 @@ public class LoadBalancerController : ControllerBase
     [Route("AddService")]
     public async Task<IActionResult> AddService(string serviceName)
     {
+        Console.WriteLine("called loadbalancer add service");
         // Here we want to check if the given service name is correct
         // So we attempt to ping to check the connection
 
         try
         {
-            var request = new RestRequest($"{serviceName}/ping");
+            var request = new RestRequest($"http://{serviceName}/ping");
             var response = await client.GetAsync(request);
             response.ThrowIfError();
 

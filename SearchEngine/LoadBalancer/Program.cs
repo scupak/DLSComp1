@@ -1,11 +1,12 @@
 
 
 using LoadBalancer.LoadBalancer;
+using LoadBalancer.Strategies;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Services.AddScoped<ILoadBalancerStrategy, RoundRobinStrategy>();
 builder.Services.AddScoped<ILoadBalancer, LoadBalancer.LoadBalancer.LoadBalancer>();
 
 builder.Services.AddControllers();
