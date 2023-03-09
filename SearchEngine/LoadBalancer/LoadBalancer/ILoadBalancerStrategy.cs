@@ -2,5 +2,5 @@ namespace LoadBalancer.LoadBalancer;
 
 public interface ILoadBalancerStrategy
 {
-    public string NextService(List<string> services);
+    public string NextService(SortedDictionary<string,int> services);
 }
