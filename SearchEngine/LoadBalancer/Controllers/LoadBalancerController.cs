@@ -19,14 +19,14 @@ public class LoadBalancerController : ControllerBase
     }
 
     [HttpGet]
-    [Route("search")]
+    [Route("Search")]
     public async Task<SearchResult> Search(string terms, int numberOfResults)
     {
         throw new NotImplementedException();
     }
 
     [HttpPost]
-    [Route("addService")]
+    [Route("AddService")]
     public async Task<IActionResult> AddService(string serviceName)
     {
         // Here we want to check if the given service name is correct
@@ -40,8 +40,10 @@ public class LoadBalancerController : ControllerBase
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
-                loadBalancer.AddService(serviceName);
-                return Ok();
+                //loadBalancer.AddService(serviceName);
+
+                Console.WriteLine($"Succefully connected and added the service with name: {serviceName} to the list");
+                return Ok("Connection succesfully, you have been added to the list of services");
             }
             else
             {
@@ -51,7 +53,7 @@ public class LoadBalancerController : ControllerBase
         }
         catch (Exception ex)
         {
-            return BadRequest("Could't connect to specified service");
+            return BadRequest("Connection Failed");
         }
         
 

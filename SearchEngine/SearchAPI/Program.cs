@@ -1,3 +1,5 @@
+using SearchAPI;
+
 Console.WriteLine("Search API Hostname: " + Environment.MachineName);
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,5 +24,8 @@ app.UseCors(config => config.AllowAnyOrigin());
 app.UseAuthorization();
 
 app.MapControllers();
+
+var initializer = new Initializer();
+initializer.registerWithLoadBalancer();
 
 app.Run();

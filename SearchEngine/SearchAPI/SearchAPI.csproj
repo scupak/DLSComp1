@@ -10,6 +10,7 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.2" />
         <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.0-preview.1.23111.4" />
+        <PackageReference Include="RestSharp" Version="108.0.3" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     </ItemGroup>
 

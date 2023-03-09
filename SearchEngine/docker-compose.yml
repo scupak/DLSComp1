@@ -13,12 +13,14 @@ services:
     build: 
       context:  .
       dockerfile:  "LoadBalancer/Dockerfile"
+    ports:
+      - 9001:80
   websearch:
     build: 
       context:  .
       dockerfile:  "WebSearch/Dockerfile"
     ports:
-      - 9001:80
+      - 9002:80
 
 volumes:
   data:
