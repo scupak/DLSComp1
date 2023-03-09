@@ -9,12 +9,17 @@ services:
       - 9000:80
     volumes:
       - C:/data:/data
+    deploy:
+      mode: replicated
+      replicas: 5
+      endpoint_mode: dnsrr
+
   loadbalancer: 
     build: 
       context:  .
       dockerfile:  "LoadBalancer/Dockerfile"
     ports:
-      - 9001:80
+      - 9050:80
   websearch:
     build: 
       context:  .

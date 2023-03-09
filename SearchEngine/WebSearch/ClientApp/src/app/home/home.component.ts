@@ -7,7 +7,7 @@ import {HttpClient} from "@angular/common/http";
 })
 export class HomeComponent {
   public httpClient: HttpClient;
-  public baseUrl: string = "http://localhost:9001";
+  public baseUrl: string = "http://localhost:9050";
   public searchResult?: SearchResult = undefined;
   public searchTerms: string = "";
   public loading: boolean = false;

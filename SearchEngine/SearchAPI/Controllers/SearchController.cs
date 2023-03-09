@@ -59,6 +59,7 @@ public class SearchController : ControllerBase
     [Route("ping")]
     public IActionResult Ping()
     {
-        return Ok();
+        Console.WriteLine("Ping");
+        return Ok("ping");
     }
 }

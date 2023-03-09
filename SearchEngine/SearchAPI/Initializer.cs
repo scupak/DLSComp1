@@ -12,7 +12,7 @@ namespace SearchAPI
 
         public Initializer()
         {
-            client = new RestClient("http://localhost:9001/LoadBalancer");
+            client = new RestClient("http://loadbalancer");
             hostname = Environment.MachineName;
             connectionAttempts = 1;
         }
@@ -22,7 +22,7 @@ namespace SearchAPI
             try
             {
                 Console.WriteLine($"service with host name: {hostname}, attempting to register with load balancer");
-                var request = new RestRequest("/AddService");
+                var request = new RestRequest("/loadBalancer/AddService");
                 request.AddQueryParameter("serviceName", hostname);
                 var response = await client.PostAsync(request);
                 response.ThrowIfError();
