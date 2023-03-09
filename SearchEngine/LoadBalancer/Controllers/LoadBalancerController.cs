@@ -21,5 +21,13 @@ public class LoadBalancerController : ControllerBase
         throw new NotImplementedException();
     }
 
+    [HttpPost]
+    [Route("addService")]
+    public async void AddService(string serviceName)
+    {
+
+    }
+
+
 
 }
