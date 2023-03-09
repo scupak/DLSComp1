@@ -11,6 +11,10 @@ RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash - \
         nodejs \
     && rm -rf /var/lib/apt/lists/*
 
+RUN npm install
+
+RUN ng build
+
 WORKDIR /src
 COPY ["WebSearch/WebSearch.csproj", "WebSearch/"]
 RUN dotnet restore "WebSearch/WebSearch.csproj"
