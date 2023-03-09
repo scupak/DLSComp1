@@ -1,6 +1,7 @@
 using Common;
 using LoadBalancer.LoadBalancer;
 using Microsoft.AspNetCore.Mvc;
+using RestSharp;
 
 namespace LoadBalancer.Controllers;
 
@@ -8,10 +9,12 @@ namespace LoadBalancer.Controllers;
 [Route("[controller]")]
 public class LoadBalancerController : ControllerBase
 {
-    ILoadBalancer loadBalancer;
+    private readonly ILoadBalancer loadBalancer;
+    public RestClient client;
     public LoadBalancerController(ILoadBalancer loadBalancer)
     {
         this.loadBalancer = loadBalancer;
+        client = new RestClient("http://");
     }
 
     [HttpGet]

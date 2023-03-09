@@ -2,6 +2,10 @@ namespace LoadBalancer.LoadBalancer;
 
 public class LoadBalancer : ILoadBalancer
 {
+    public LoadBalancer()
+    {
+    }
+
     public List<string> GetAllServices()
     {
         throw new NotImplementedException();

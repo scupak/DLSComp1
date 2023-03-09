@@ -6,7 +6,7 @@
     <ProjectGuid>fbfc4604-a588-4fb9-9ac8-2c8e3347fc39</ProjectGuid>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/swagger</DockerServiceUrl>
-    <DockerServiceName>web-1</DockerServiceName>
+    <DockerServiceName>websearch</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
     <None Include="docker-compose.override.yml">
