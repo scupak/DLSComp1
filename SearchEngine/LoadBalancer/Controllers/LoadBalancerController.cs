@@ -35,7 +35,7 @@ public class LoadBalancerController : ControllerBase
 
         try
         {
-            var request = new RestRequest($"http://{serviceName}/ping");
+            var request = new RestRequest($"http://{serviceName}/Search/ping");
             var response = await client.GetAsync(request);
             response.ThrowIfError();
 
