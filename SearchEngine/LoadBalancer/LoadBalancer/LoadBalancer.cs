@@ -37,6 +37,16 @@ public class LoadBalancer : ILoadBalancer
             return serviceName;
         }
     }
+    
+    public string SetService(string serviceName, int numberOfConnections)
+    {
+        lock (_servicesLockObject)
+        {
+            _services[serviceName] = numberOfConnections;
+            return serviceName;
+        }
+    
+    }
 
     public ILoadBalancerStrategy GetActiveStrategy()
     {
