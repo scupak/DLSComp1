@@ -56,10 +56,18 @@ public class LoadBalancerController : ControllerBase
         {
             return BadRequest("Connection Failed");
         }
-        
 
 
 
+
+    }
+
+    [HttpGet]
+    [Route("ping")]
+    public IActionResult Ping()
+    {
+        Console.WriteLine("Ping");
+        return Ok("ping");
     }
 
 

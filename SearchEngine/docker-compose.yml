@@ -1,6 +1,19 @@
 version:  "3.9"
 
 services:
+
+  loadbalancer: 
+    build: 
+      context:  .
+      dockerfile:  "LoadBalancer/Dockerfile"
+    ports:
+      - 9050:80
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9050/LoadBalancer/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
   searchapi: 
     build: 
       context:  .
@@ -11,17 +24,23 @@ services:
       mode: replicated
       replicas: 5
       endpoint_mode: dnsrr
+    restart: on-failure 
+    depends_on:
+       loadbalancer:
+        condition: service_healthy
+    links: 
+        - loadbalancer
 
-  loadbalancer: 
-    build: 
-      context:  .
-      dockerfile:  "LoadBalancer/Dockerfile"
-    ports:
-      - 9050:80
   websearch:
     build: 
       context:  .
       dockerfile:  "WebSearch/Dockerfile"
+    restart: on-failure 
+    depends_on:
+       loadbalancer:
+        condition: service_healthy
+    links: 
+        - loadbalancer
     ports:
       - 9002:80
 
