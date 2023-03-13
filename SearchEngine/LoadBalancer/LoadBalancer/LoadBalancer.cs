@@ -1,14 +1,17 @@
+using System.Collections.Concurrent;
+using LoadBalancer.Models;
+
 namespace LoadBalancer.LoadBalancer;
 
 public class LoadBalancer : ILoadBalancer
 {
    
-    private readonly SortedDictionary<string,int> _services;
+    private readonly List<Service> _services;
     private ILoadBalancerStrategy _currentStrategy;
     private readonly object _servicesLockObject = new object();
     public LoadBalancer(ILoadBalancerStrategy strategy)
     {
-        _services = new SortedDictionary<string,int>();
+        _services = new List<Service>();
         _currentStrategy = strategy;
     }
 
@@ -16,7 +19,7 @@ public class LoadBalancer : ILoadBalancer
     {
         lock (_servicesLockObject)
         {
-            return _services.Keys.ToList();
+            return _services.Select(service => service.HostName).ToList();
         }
     }
 
@@ -24,7 +27,7 @@ public class LoadBalancer : ILoadBalancer
     {
         lock (_servicesLockObject)
         {
-            _services.Add(serviceName, 0);
+            _services.Add(new Service(serviceName, 0));
             return _services.Count;
         }
     }
@@ -33,7 +36,7 @@ public class LoadBalancer : ILoadBalancer
     {
         lock (_servicesLockObject)
         {
-            _services.Remove(serviceName);
+            _services.Remove(_services.First(service => service.HostName == serviceName));
             return serviceName;
         }
     }
@@ -42,7 +45,12 @@ public class LoadBalancer : ILoadBalancer
     {
         lock (_servicesLockObject)
         {
-            _services[serviceName] = numberOfConnections;
+            var serviceToSet = _services.Find(s => s.HostName == serviceName);
+            if(serviceToSet == null)
+            {
+                throw new Exception("Service not found");
+            }
+            _services.Find(s => s.HostName == serviceName)!.NumberOfConnections = numberOfConnections;
             return serviceName;
         }
     
