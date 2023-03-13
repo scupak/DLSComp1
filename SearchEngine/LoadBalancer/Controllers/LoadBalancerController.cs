@@ -41,9 +41,14 @@ public class LoadBalancerController : ControllerBase
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
-                //loadBalancer.AddService(serviceName);
+                loadBalancer.AddService(serviceName);
 
                 Console.WriteLine($"Succefully connected and added the service with name: {serviceName} to the list");
+                Console.WriteLine("Current list of services:");
+                foreach (var service in loadBalancer.GetAllServices())
+                {
+                    Console.WriteLine(service);
+                }
                 return Ok("Connection succesfully, you have been added to the list of services");
             }
             else
