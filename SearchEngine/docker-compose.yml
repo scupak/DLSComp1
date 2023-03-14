@@ -9,7 +9,7 @@ services:
     ports:
       - 9050:80
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9050/LoadBalancer/ping"]
+      test: ["CMD", "curl", "-f", "http://loadbalancer/LoadBalancer/ping"]
       interval: 30s
       timeout: 10s
       retries: 5
