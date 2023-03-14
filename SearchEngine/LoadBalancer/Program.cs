@@ -6,8 +6,8 @@ using LoadBalancer.Strategies;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddScoped<ILoadBalancerStrategy, RoundRobinStrategy>();
-builder.Services.AddScoped<ILoadBalancer, LoadBalancer.LoadBalancer.LoadBalancer>();
+builder.Services.AddSingleton<ILoadBalancerStrategy, RoundRobinStrategy>();
+builder.Services.AddSingleton<ILoadBalancer, LoadBalancer.LoadBalancer.LoadBalancer>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

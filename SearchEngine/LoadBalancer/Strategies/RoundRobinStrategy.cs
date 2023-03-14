@@ -1,11 +1,26 @@
 ﻿using LoadBalancer.LoadBalancer;
+using LoadBalancer.Models;
 
 namespace LoadBalancer.Strategies;
 
 public class RoundRobinStrategy : ILoadBalancerStrategy
 {
-    public string NextService(SortedDictionary<string, int> services)
+    private int _currentServiceIndex = 0;
+    public string NextService(List<Service> services)
     {
-        throw new NotImplementedException();
+        
+        var count = services.Count;
+        if (count == 0)
+        {
+            throw new Exception("No services available");
+        }
+        
+        var service = services.ElementAt(_currentServiceIndex);
+        _currentServiceIndex = (_currentServiceIndex + 1) % count;
+        return service.HostName;
+
+
+
+
     }
 }
