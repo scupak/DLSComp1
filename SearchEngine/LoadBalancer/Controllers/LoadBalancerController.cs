@@ -21,6 +21,7 @@ public class LoadBalancerController : ControllerBase
     [Route("Search")]
     public async void Search(string terms, int numberOfResults)
     {
+        Console.WriteLine("Search has been called");
         try
         {
             var request = new RestRequest($"http://123123123/Search/ping");
@@ -30,8 +31,14 @@ public class LoadBalancerController : ControllerBase
             Console.WriteLine(response);
 
         }
+        catch (HttpRequestException ex)
+        {
+            Console.WriteLine("Couldn't Connect to service");
+            Console.WriteLine(ex);
+        }
         catch (Exception ex)
         {
+            Console.WriteLine("Something Went Wrong");
             Console.WriteLine(ex);
         }
     }

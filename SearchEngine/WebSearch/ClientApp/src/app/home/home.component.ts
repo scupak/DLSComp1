@@ -7,7 +7,7 @@ import {HttpClient} from "@angular/common/http";
 })
 export class HomeComponent {
   public httpClient: HttpClient;
-  public baseUrl: string = "http://loadbalancer";
+  public baseUrl: string = "http://localhost:9050";
   public searchResult?: SearchResult = undefined;
   public searchTerms: string = "";
   public loading: boolean = false;
@@ -20,6 +20,7 @@ export class HomeComponent {
   public search(searchTerms: string) {
     this.loading = true;
     this.searchResult = undefined;
+    console.log("Calling this url: " + this.baseUrl + '/LoadBalancer/Search?terms=');
     this.httpClient.get<SearchResult>(this.baseUrl + '/LoadBalancer/Search?terms=' + searchTerms + "&numberOfResults=" + 10).subscribe(result => {
       this.searchResult = result;
       this.loading = false;
