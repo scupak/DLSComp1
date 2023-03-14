@@ -1,4 +1,3 @@
-using Common;
 using LoadBalancer.LoadBalancer;
 using Microsoft.AspNetCore.Mvc;
 using RestSharp;
@@ -20,9 +19,21 @@ public class LoadBalancerController : ControllerBase
 
     [HttpGet]
     [Route("Search")]
-    public async Task<SearchResult> Search(string terms, int numberOfResults)
+    public async void Search(string terms, int numberOfResults)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var request = new RestRequest($"http://123123123/Search/ping");
+            var response = await client.GetAsync(request);
+            response.ThrowIfError();
+
+            Console.WriteLine(response);
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
     }
 
     [HttpPost]
