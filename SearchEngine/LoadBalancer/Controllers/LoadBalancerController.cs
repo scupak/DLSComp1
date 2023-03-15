@@ -4,6 +4,7 @@ using RestSharp;
 using System.Net;
 using Common;
 using LoadBalancer.Infrastructure;
+using LoadBalancer.Strategies;
 
 namespace LoadBalancer.Controllers;
 
@@ -134,6 +135,37 @@ public class LoadBalancerController : ControllerBase
     {
         Console.WriteLine("Ping");
         return Ok("ping");
+    }
+    
+    //Endpoint for setting loadbalancer strategy
+    [HttpPost]
+    [Route("SetStrategy")]
+    public IActionResult SetStrategy(string strategy)
+    {
+        Console.WriteLine("SetStrategy");
+        try
+        {
+            // set strategy based on the received string 
+            switch (strategy)
+            {
+                case "RoundRobin":
+                    _loadBalancer.SetActiveStrategy(new RoundRobinStrategy());
+                    break;
+                case "LeastConnections":
+                    _loadBalancer.SetActiveStrategy(new LeastConnectionsStrategy());
+                    break;
+                default:
+                    return StatusCode(400, "Invalid strategy");
+                
+            }
+            return Ok("Strategy set to: " + strategy);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Something Went Wrong");
+            Console.WriteLine(ex);
+            return StatusCode(500, ex.Message);
+        }
     }
 
 
