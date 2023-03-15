@@ -11,8 +11,6 @@ public class App
         try
         {
             RestClient c = new RestClient("http://loadbalancer/LoadBalancer");
-            HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri("http://loadbalancer/LoadBalancer");
             Console.WriteLine("Console Search");
 
             while (true)
@@ -28,9 +26,11 @@ public class App
                 if (input.Equals("q")) break;
 
                 string resultString = string.Empty;
-                client.GetStringAsync("/Search?terms=" + input + "&numberOfResults=" + 10).ContinueWith(
-                    (task) => { resultString = task.Result; }).Wait();
-                SearchResult result = JsonConvert.DeserializeObject<SearchResult>(resultString);
+                
+                var request = new RestRequest("/Search?terms=" + input + "&numberOfResults=" + 10);
+                var response = c.GetAsync<SearchResult>(request);
+                response.Wait();
+                SearchResult result = response.Result;
 
                 foreach (var ignored in result.IgnoredTerms)
                 {

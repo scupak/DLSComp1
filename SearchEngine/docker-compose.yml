@@ -35,6 +35,10 @@ services:
     build:
       context:  .
       dockerfile:  "ConsoleSearchv2/Dockerfile"
+    deploy:
+      mode: replicated
+      replicas: 5
+      endpoint_mode: dnsrr
     stdin_open: true
     tty: true    
     restart: on-failure
