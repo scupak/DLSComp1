@@ -27,11 +27,6 @@ public class LoadBalancerController : ControllerBase
         Console.WriteLine("Search has been called");
         try
         {
-            /*
-            var request = new RestRequest($"http://123123123/Search/ping");
-            var response = await client.GetAsync(request);
-            response.ThrowIfError();
-            */
             var pingResult = false;
             var serviceName = "";
             
