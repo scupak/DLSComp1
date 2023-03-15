@@ -14,6 +14,7 @@ public class LoadBalancerController : ControllerBase
 {
     private readonly ILoadBalancer _loadBalancer;
     private readonly IServiceGateway<SearchResult> _serviceGateway;
+
     public LoadBalancerController(ILoadBalancer loadBalancer, IServiceGateway<SearchResult> serviceGateway)
     {
         _loadBalancer = loadBalancer;
@@ -29,7 +30,7 @@ public class LoadBalancerController : ControllerBase
         {
             var pingResult = false;
             var serviceName = "";
-            
+
             while (!pingResult)
             {
                 serviceName = _loadBalancer.NextService();
@@ -38,14 +39,12 @@ public class LoadBalancerController : ControllerBase
                 {
                     _loadBalancer.RemoveService(serviceName);
                     Console.WriteLine("removed service: " + serviceName);
-
                 }
 
                 if (_loadBalancer.GetAllServices().Count <= 0)
                 {
                     return StatusCode(503, "No Services Available");
                 }
-                
             }
 
             _loadBalancer.IncrementServiceConnections(serviceName);
@@ -54,15 +53,12 @@ public class LoadBalancerController : ControllerBase
             Console.WriteLine("successfully got result from: " + serviceName);
             _loadBalancer.DecrementServiceConnections(serviceName);
             return new ObjectResult(result);
-
-
-
         }
         catch (HttpRequestException ex)
         {
             Console.WriteLine("Couldn't Connect to service");
             Console.WriteLine(ex);
-            
+
             return StatusCode(503, ex.Message);
         }
         catch (ArgumentException ex)
@@ -92,25 +88,24 @@ public class LoadBalancerController : ControllerBase
             var response = await _serviceGateway.Ping(serviceName);
 
             if (!response) throw new BadHttpRequestException("Connection Failed");
-            
+
             _loadBalancer.AddService(serviceName);
 
             Console.WriteLine($"Succefully connected and added the service with name: {serviceName} to the list");
             Console.WriteLine("Current list of services:");
-                
+
             foreach (var service in _loadBalancer.GetAllServices())
             {
                 Console.WriteLine(service);
             }
+
             return Ok("Connection succesfully, you have been added to the list of services");
-
-
         }
         catch (HttpRequestException ex)
         {
             Console.WriteLine("Couldn't Connect to service");
             Console.WriteLine(ex);
-            return StatusCode(503,ex.Message);
+            return StatusCode(503, ex.Message);
         }
         catch (Exception ex)
         {
@@ -118,10 +113,6 @@ public class LoadBalancerController : ControllerBase
             Console.WriteLine(ex);
             return StatusCode(500, ex.Message);
         }
-
-
-
-
     }
 
     [HttpGet]
@@ -131,7 +122,7 @@ public class LoadBalancerController : ControllerBase
         Console.WriteLine("Ping");
         return Ok("ping");
     }
-    
+
     //Endpoint for setting loadbalancer strategy
     [HttpPost]
     [Route("SetStrategy")]
@@ -151,8 +142,8 @@ public class LoadBalancerController : ControllerBase
                     break;
                 default:
                     return StatusCode(400, "Invalid strategy");
-                
             }
+
             return Ok("Strategy set to: " + strategy);
         }
         catch (Exception ex)
@@ -162,7 +153,4 @@ public class LoadBalancerController : ControllerBase
             return StatusCode(500, ex.Message);
         }
     }
-
-
-
 }
