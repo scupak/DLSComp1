@@ -7,7 +7,7 @@ namespace LoadBalancer.Infrastructure;
 public class SearchServiceGateway : IServiceGateway<SearchResult>
 {
     public RestClient client;
-    
+
     public SearchServiceGateway()
     {
         client = new RestClient();
@@ -19,22 +19,31 @@ public class SearchServiceGateway : IServiceGateway<SearchResult>
         var request = new RestRequest($"http://{serviceName}/Search?{parameters}");
         var response = await client.GetAsync(request);
         response.ThrowIfError();
-        
-        if (response.StatusCode == HttpStatusCode.OK && response.Content != null) return Newtonsoft.Json.JsonConvert.DeserializeObject<SearchResult>(response.Content) ?? throw new ArgumentException();
-        
+
+        if (response.StatusCode == HttpStatusCode.OK && response.Content != null)
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<SearchResult>(response.Content) ??
+                   throw new ArgumentException();
+
         throw new BadHttpRequestException("Connection Failed");
     }
 
     public async Task<bool> Ping(string serviceName)
     {
-        var request = new RestRequest($"http://{serviceName}/Search/ping");
-        var response = await client.GetAsync(request);
-        response.ThrowIfError();
-        
-        if (response.StatusCode == HttpStatusCode.OK) return true;
-        
-        Console.WriteLine("Connection Failed could not connect to: " + serviceName);
-        return false;
-        
+        try
+        {
+            var request = new RestRequest($"http://{serviceName}/Search/ping");
+            var response = await client.GetAsync(request);
+            response.ThrowIfError();
+
+            if (response.StatusCode == HttpStatusCode.OK) return true;
+
+            Console.WriteLine("Connection Failed could not connect to: " + serviceName);
+            return false;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Connection Failed could not connect to: " + serviceName);
+            return false;
+        }
     }
 }
