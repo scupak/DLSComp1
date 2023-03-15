@@ -10,7 +10,7 @@ services:
       - 9050:80
     healthcheck:
       test: ["CMD", "curl", "-f", "http://loadbalancer/LoadBalancer/ping"]
-      interval: 30s
+      interval: 10s
       timeout: 10s
       retries: 5
 
@@ -30,6 +30,19 @@ services:
         condition: service_healthy
     links: 
         - loadbalancer
+
+  consolesearch:
+    build:
+      context:  .
+      dockerfile:  "ConsoleSearchv2/Dockerfile"
+    stdin_open: true
+    tty: true    
+    restart: on-failure
+    depends_on:
+      loadbalancer:
+        condition: service_healthy
+    links:
+      - loadbalancer
 
   websearch:
     build: 

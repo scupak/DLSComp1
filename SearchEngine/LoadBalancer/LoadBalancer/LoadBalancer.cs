@@ -41,7 +41,7 @@ public class LoadBalancer : ILoadBalancer
         }
     }
     
-    public string SetService(string serviceName, int numberOfConnections)
+    public string IncrementServiceConnections(string serviceName)
     {
         lock (_servicesLockObject)
         {
@@ -50,7 +50,33 @@ public class LoadBalancer : ILoadBalancer
             {
                 throw new Exception("Service not found");
             }
-            _services.Find(s => s.HostName == serviceName)!.NumberOfConnections = numberOfConnections;
+            _services.Find(s => s.HostName == serviceName)!.NumberOfConnections += 1;
+            Console.WriteLine("All services:");
+            foreach (Service service in _services)
+            {
+                Console.WriteLine(service.HostName + " " + service.NumberOfConnections);
+            }
+            return serviceName;
+        }
+    
+    }
+    
+    
+    public string DecrementServiceConnections(string serviceName)
+    {
+        lock (_servicesLockObject)
+        {
+            var serviceToSet = _services.Find(s => s.HostName == serviceName);
+            if(serviceToSet == null)
+            {
+                throw new Exception("Service not found");
+            }
+            _services.Find(s => s.HostName == serviceName)!.NumberOfConnections -= 1;
+            Console.WriteLine("All services:");
+            foreach (Service service in _services)
+            {
+                Console.WriteLine(service.HostName + " " + service.NumberOfConnections);
+            }
             return serviceName;
         }
     

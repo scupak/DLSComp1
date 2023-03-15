@@ -2,6 +2,8 @@ using LoadBalancer.LoadBalancer;
 using Microsoft.AspNetCore.Mvc;
 using RestSharp;
 using System.Net;
+using Common;
+using LoadBalancer.Infrastructure;
 
 namespace LoadBalancer.Controllers;
 
@@ -9,37 +11,75 @@ namespace LoadBalancer.Controllers;
 [Route("[controller]")]
 public class LoadBalancerController : ControllerBase
 {
-    private readonly ILoadBalancer loadBalancer;
-    public RestClient client;
-    public LoadBalancerController(ILoadBalancer loadBalancer)
+    private readonly ILoadBalancer _loadBalancer;
+    private readonly IServiceGateway<SearchResult> _serviceGateway;
+    public LoadBalancerController(ILoadBalancer loadBalancer, IServiceGateway<SearchResult> serviceGateway)
     {
-        this.loadBalancer = loadBalancer;
-        client = new RestClient();
+        _loadBalancer = loadBalancer;
+        _serviceGateway = serviceGateway;
     }
 
     [HttpGet]
     [Route("Search")]
-    public async void Search(string terms, int numberOfResults)
+    public async Task<IActionResult> Search(string terms, int numberOfResults)
     {
         Console.WriteLine("Search has been called");
         try
         {
+            /*
             var request = new RestRequest($"http://123123123/Search/ping");
             var response = await client.GetAsync(request);
             response.ThrowIfError();
+            */
+            var pingResult = false;
+            var serviceName = "";
+            
+            while (!pingResult)
+            {
+                serviceName = _loadBalancer.NextService();
+                pingResult = await _serviceGateway.Ping(serviceName);
+                if (!pingResult)
+                {
+                    _loadBalancer.RemoveService(serviceName);
+                    Console.WriteLine("removed service: " + serviceName);
 
-            Console.WriteLine(response);
+                }
+
+                if (_loadBalancer.GetAllServices().Count <= 0)
+                {
+                    return StatusCode(503, "No Services Available");
+                }
+                
+            }
+
+            _loadBalancer.IncrementServiceConnections(serviceName);
+            Console.WriteLine("successfully pinged: " + serviceName + " Getting result...");
+            var result = await _serviceGateway.Get(serviceName, $"terms={terms}&numberOfResults={numberOfResults}");
+            Console.WriteLine("successfully got result from: " + serviceName);
+            _loadBalancer.DecrementServiceConnections(serviceName);
+            return new ObjectResult(result);
+
+
 
         }
         catch (HttpRequestException ex)
         {
             Console.WriteLine("Couldn't Connect to service");
             Console.WriteLine(ex);
+            
+            return StatusCode(503, ex.Message);
+        }
+        catch (ArgumentException ex)
+        {
+            Console.WriteLine("Search result was null");
+            Console.WriteLine(ex);
+            return StatusCode(404, ex.Message);
         }
         catch (Exception ex)
         {
             Console.WriteLine("Something Went Wrong");
             Console.WriteLine(ex);
+            return StatusCode(500, ex.Message);
         }
     }
 
@@ -53,31 +93,34 @@ public class LoadBalancerController : ControllerBase
 
         try
         {
-            var request = new RestRequest($"http://{serviceName}/Search/ping");
-            var response = await client.GetAsync(request);
-            response.ThrowIfError();
+            var response = await _serviceGateway.Ping(serviceName);
 
-            if (response.StatusCode == HttpStatusCode.OK)
+            if (!response) throw new BadHttpRequestException("Connection Failed");
+            
+            _loadBalancer.AddService(serviceName);
+
+            Console.WriteLine($"Succefully connected and added the service with name: {serviceName} to the list");
+            Console.WriteLine("Current list of services:");
+                
+            foreach (var service in _loadBalancer.GetAllServices())
             {
-                loadBalancer.AddService(serviceName);
-
-                Console.WriteLine($"Succefully connected and added the service with name: {serviceName} to the list");
-                Console.WriteLine("Current list of services:");
-                foreach (var service in loadBalancer.GetAllServices())
-                {
-                    Console.WriteLine(service);
-                }
-                return Ok("Connection succesfully, you have been added to the list of services");
+                Console.WriteLine(service);
             }
-            else
-            {
-                throw new BadHttpRequestException("Connection Failed");
-            }
+            return Ok("Connection succesfully, you have been added to the list of services");
 
+
+        }
+        catch (HttpRequestException ex)
+        {
+            Console.WriteLine("Couldn't Connect to service");
+            Console.WriteLine(ex);
+            return StatusCode(503,ex.Message);
         }
         catch (Exception ex)
         {
-            return BadRequest("Connection Failed");
+            Console.WriteLine("Something Went Wrong");
+            Console.WriteLine(ex);
+            return StatusCode(500, ex.Message);
         }
 
 
