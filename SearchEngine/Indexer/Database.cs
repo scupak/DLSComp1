@@ -1,20 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using Common;
+﻿using Common;
 using Microsoft.Data.Sqlite;
+using System.Collections.Generic;
 
 namespace Indexer
 {
     public class Database
     {
         private SqliteConnection _connection;
-        
+
         public Database()
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder();
             connectionStringBuilder.Mode = SqliteOpenMode.ReadWriteCreate;
             connectionStringBuilder.DataSource = Config.DatabasePath;
-            
+
             _connection = new SqliteConnection(connectionStringBuilder.ConnectionString);
             _connection.Open();
 
@@ -22,13 +21,13 @@ namespace Indexer
             Execute("CREATE TABLE Occ(wordId INTEGER, docId INTEGER, "
                     + "FOREIGN KEY (wordId) REFERENCES word(id), "
                     + "FOREIGN KEY (docId) REFERENCES document(id))");
-            
+
             Execute("DROP TABLE IF EXISTS document");
             Execute("CREATE TABLE document(id INTEGER PRIMARY KEY AUTOINCREMENT, url VARCHAR(500))");
-            
+
             Execute("DROP TABLE IF EXISTS word");
             Execute("CREATE TABLE word(id INTEGER PRIMARY KEY, name VARCHAR(50))");
-            
+
             //Execute("CREATE INDEX word_index ON Occ (wordId)");
         }
 
@@ -55,7 +54,7 @@ namespace Indexer
                 command.Parameters.Add(paramId);
 
                 // Insert all entries in the res
-                
+
                 foreach (var p in res)
                 {
                     paramName.Value = p.Key;
@@ -76,7 +75,7 @@ namespace Indexer
 
                 var paramwordId = command.CreateParameter();
                 paramwordId.ParameterName = "wordId";
-               
+
                 command.Parameters.Add(paramwordId);
 
                 var paramDocId = command.CreateParameter();
@@ -125,7 +124,7 @@ namespace Indexer
         public Dictionary<string, int> GetAllWords()
         {
             Dictionary<string, int> res = new Dictionary<string, int>();
-      
+
             var selectCmd = _connection.CreateCommand();
             selectCmd.CommandText = "SELECT * FROM word";
 
@@ -135,7 +134,7 @@ namespace Indexer
                 {
                     var id = reader.GetInt32(0);
                     var w = reader.GetString(1);
-                    
+
                     res.Add(w, id);
                 }
             }
